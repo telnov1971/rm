@@ -17,6 +17,7 @@ import ru.omel.rm.data.entity.Role;
 import ru.omel.rm.data.entity.User;
 import ru.omel.rm.data.service.UserService;
 import ru.omel.rm.views.admin.DbLoad;
+import ru.omel.rm.views.admin.ListUsers;
 import ru.omel.rm.views.users.Profile;
 
 /**
@@ -114,7 +115,7 @@ public class MainView extends AppLayout {
             if(getUI().isPresent()){
                 UI ui = getUI().get();
                 ui.getSession().getSession().invalidate();
-                ui.navigate("/");
+                if(ui.getCurrent()!=null) ui.getCurrent().navigate("/");
             }
         });
         button.getElement().setAttribute("title","Выход");
@@ -130,7 +131,7 @@ public class MainView extends AppLayout {
     }
 
     private RouterLink createLinksAdmin() {
-        MenuItemInfo menuItem = new MenuItemInfo("Список пользователей", "globe-solid", DtoView.class);
+        MenuItemInfo menuItem = new MenuItemInfo("Список пользователей", "globe-solid", ListUsers.class);
         return createLink(menuItem);
     }
 

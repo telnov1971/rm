@@ -38,7 +38,7 @@ public class DbLoadService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Scheduled(fixedDelay = 1000*60*5)
+    @Scheduled(fixedDelay = 1000*60*60*3)
 //    @Scheduled(cron = "10 * * * 1-5 *")
 //    @SchedulerLock(name = "scheduledTaskName")
     void loadData() throws FileNotFoundException {

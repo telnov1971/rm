@@ -29,4 +29,5 @@ public class DogService {
     public List<Dog> findAll() {
         return dogRepository.findAll();
     }
+
 }

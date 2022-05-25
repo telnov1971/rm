@@ -25,10 +25,11 @@ public class DataHelper {
                     DtoPokPu pokPuDto = new DtoPokPu(
                             pu.getObName()
                             , pu.getObAdres()
-                            , pu.getMarka()
                             , pu.getNomPu()
+                            , pu.getMarka()
                             , pu.getKoef()
                             , pok.getPdate()
+                            , pok.getTzona()
                             , pok.getData()
                     );
                     result.add(pokPuDto);

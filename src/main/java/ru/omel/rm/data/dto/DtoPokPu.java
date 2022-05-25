@@ -1,20 +1,17 @@
 package ru.omel.rm.data.dto;
 
-import ru.omel.rm.data.AbstractEntity;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.util.Objects;
 
 //@Entity
 //@Table(name = "dto_pok_pu")
-public class DtoPokPu { // extends AbstractEntity {
+public class DtoPokPu implements Comparable { // extends AbstractEntity {
     private String objName;
     private String objAddress;
     private String typeDevice;
     private String numDevice;
     private String ratio;
     private String date;
+    private String tzona;
     private String meter;
 
 //    public DtoPokPu() {
@@ -25,6 +22,7 @@ public class DtoPokPu { // extends AbstractEntity {
             , String typeDevice
             , String ratio
             , String date
+            , String tzona
             , String meter) {
         this.objName = objName;
         this.objAddress = objAddress;
@@ -32,6 +30,7 @@ public class DtoPokPu { // extends AbstractEntity {
         this.typeDevice = typeDevice;
         this.ratio = ratio;
         this.date = date;
+        this.tzona = tzona;
         this.meter = meter;
     }
 
@@ -59,6 +58,10 @@ public class DtoPokPu { // extends AbstractEntity {
         return date;
     }
 
+    public String getTzona() {
+        return tzona;
+    }
+
     public String getMeter() {
         return meter;
     }
@@ -74,12 +77,13 @@ public class DtoPokPu { // extends AbstractEntity {
                 Objects.equals(this.typeDevice, entity.typeDevice) &&
                 Objects.equals(this.ratio, entity.ratio) &&
                 Objects.equals(this.date, entity.date) &&
+                Objects.equals(this.tzona, entity.tzona) &&
                 Objects.equals(this.meter, entity.meter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(objName, objAddress, numDevice, typeDevice, ratio, date, meter);
+        return Objects.hash(objName, objAddress, numDevice, typeDevice, ratio, date, tzona, meter);
     }
 
     @Override
@@ -91,6 +95,15 @@ public class DtoPokPu { // extends AbstractEntity {
                 "typeDevice = " + typeDevice + ", " +
                 "ratio = " + ratio +
                 "date = " + date +
+                "tzona = " + tzona +
                 "meter = " + meter + ")";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.numDevice.compareTo(((DtoPokPu)o).numDevice);
+//        Long compare = Long.parseLong(this.numDevice) - Long.parseLong(((DtoPokPu)o).numDevice);
+//        int result = (compare > 0) ? 1 : (compare < 0) ? -1 : 0;
+//        return result;
     }
 }

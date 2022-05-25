@@ -53,6 +53,7 @@ public class Profile extends Div implements BeforeEnterObserver {
     private final Label note;
     private final Label subnote;
     private final Button saveButton = new Button("Зарегистрировать");
+    private User currentUser;
 
     public Profile(UserService userService,
                    PasswordEncoder passwordEncoder,
@@ -89,7 +90,11 @@ public class Profile extends Div implements BeforeEnterObserver {
             // clear fields by setting null
             userBinder.readBean(null);
             notyfy.setVisible(false);
-            UI.getCurrent().navigate("/");
+            if(currentUser.getRoles().contains(Role.ADMIN)) {
+                if(UI.getCurrent()!=null) UI.getCurrent().navigate("/users");
+            } else {
+                if(UI.getCurrent()!=null) UI.getCurrent().navigate("/meters");
+            }
         });
 
         HorizontalLayout buttonBar = new HorizontalLayout();
@@ -145,9 +150,11 @@ public class Profile extends Div implements BeforeEnterObserver {
                         editUser.setPassword(this.passwordEncoder.encode(password.getValue()));
                 }
                 userService.update(this.editUser);
-//                if (!editMode) {
-                    UI.getCurrent().navigate("/");
-//                }
+                if(currentUser.getRoles().contains(Role.ADMIN)) {
+                    if(UI.getCurrent()!=null) UI.getCurrent().navigate("/users");
+                } else {
+                    if(UI.getCurrent()!=null) UI.getCurrent().navigate("/meters");
+                }
             } else {
                 notyfy.setText("Пароли не совпадают");
                 notyfy.setVisible(true);
@@ -201,17 +208,19 @@ public class Profile extends Div implements BeforeEnterObserver {
         Optional<Long> userdId = event.getRouteParameters().getLong(USER_ID);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (username != null) {
-            User currentUser =  this.userService.findByUsername(username);
+            currentUser =  this.userService.findByUsername(username);
             if (currentUser != null) {
-                if (currentUser.getUsername().
-                        equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
-                    populateForm(currentUser);
-                } else if(currentUser.getRoles().contains(Role.ADMIN)) {
+                if(currentUser.getRoles().contains(Role.ADMIN)) {
                     if(userdId.isPresent()) {
                         if(userService.findById(userdId.get()).isPresent()) {
                             populateForm((userService.findById(userdId.get())).get());
+                            return;
                         }
                     }
+                }
+                if (currentUser.getUsername().
+                        equals(SecurityContextHolder.getContext().getAuthentication().getName())) {
+                    populateForm(currentUser);
                 } else {
                     Notification.show("У Вас нет прав :(", 3000,
                             Notification.Position.BOTTOM_START);

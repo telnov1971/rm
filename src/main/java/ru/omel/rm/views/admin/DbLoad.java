@@ -239,7 +239,7 @@ public class DbLoad extends Div implements BeforeEnterObserver {
                 SecurityContextHolder.getContext().getAuthentication().getName()
         );
         if(!currentUser.getRoles().contains(Role.ADMIN)) {
-            UI.getCurrent().navigate("/");
+            if(UI.getCurrent()!=null) UI.getCurrent().navigate("/meters");
         }
     }
 
