@@ -47,13 +47,6 @@ public class User extends AbstractEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Demand> demands;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "garant_id")
-    private Garant garant;
-
     public User() {
     }
     public User(String username, String password, boolean active, String fio, String contact, Set<Role> roles) {
@@ -65,9 +58,7 @@ public class User extends AbstractEntity implements UserDetails {
         this.contact = contact;
         this.roles = roles;
         this.email = "";
-        this.demands = null;
         this.activationCode = "";
-        this.garant = null;
     }
 
     @Override
@@ -134,13 +125,6 @@ public class User extends AbstractEntity implements UserDetails {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
-    public Set<Demand> getDemands() {
-        return demands;
-    }
-    public void setDemands(Set<Demand> demands) {
-        this.demands = demands;
-    }
-
     public boolean isAdmin() {
         return roles.contains(Role.ADMIN);
     }
@@ -163,13 +147,6 @@ public class User extends AbstractEntity implements UserDetails {
     public boolean isEnabled() {
         return isActive();
     }
-    public Garant getGarant() {
-        return garant;
-    }
-    public void setGarant(Garant garant) {
-        this.garant = garant;
-    }
-
     public String getFio() {
         return fio;
     }

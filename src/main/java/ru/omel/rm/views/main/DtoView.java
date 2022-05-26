@@ -3,6 +3,7 @@ package ru.omel.rm.views.main;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.grid.ColumnTextAlign;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
@@ -23,11 +24,6 @@ import ru.omel.rm.data.dto.DtoPokPu;
 import ru.omel.rm.data.entity.*;
 import ru.omel.rm.data.service.*;
 import ru.omel.rm.views.admin.ListUsers;
-import ru.omel.rm.views.demandedit.DemandEditTemporal;
-import ru.omel.rm.views.demandedit.DemandEditTo15;
-import ru.omel.rm.views.demandedit.DemandEditTo150;
-import ru.omel.rm.views.demandedit.DemandEditeGeneral;
-import ru.omel.rm.views.support.ViewHelper;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +35,6 @@ import java.util.*;
 public class DtoView extends Div implements BeforeEnterObserver {
     private final TextField filterId = new TextField();
     private final TextField filterText = new TextField();
-    private Select<DemandType> demandTypeSelect;
     private final Button clearFilter = new Button(new Icon(VaadinIcon.ERASER));
     private final Grid<DtoPokPu> gridPok = new Grid<>(DtoPokPu.class, false);
 
@@ -54,15 +49,11 @@ public class DtoView extends Div implements BeforeEnterObserver {
     private final Label tInn = new Label();
 
 
-    private final DemandService demandService;
     private final UserService userService;
-    private final DemandTypeService demandTypeService;
 
     private User currentUser;
     //@Autowired
-    public DtoView(DemandService demandService
-            , UserService userService
-            , DemandTypeService demandTypeService
+    public DtoView(UserService userService
             , DogService dogService
             , PuService puService
             , PokService pokService) {
@@ -78,16 +69,11 @@ public class DtoView extends Div implements BeforeEnterObserver {
         vlDog.add(tNumber,tNum,tName,tInn);
         header.add(vlLabel,vlDog);
         filterLayout.getElement().getStyle().set("margin", "10px");
-        this.demandService = demandService;
         this.userService = userService;
-        this.demandTypeService = demandTypeService;
         this.dogService = dogService;
         this.pokService = pokService;
         this.puService = puService;
         addClassNames("master-detail-view", "flex", "flex-col", "h-full");
-
-        demandTypeSelect = ViewHelper.createSelect(DemandType::getName, demandTypeService.findAll(),
-                "Тип заявки", DemandType.class);
 
         // Configure Grid
         Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
@@ -99,16 +85,26 @@ public class DtoView extends Div implements BeforeEnterObserver {
 
         gridPok.addColumn(DtoPokPu::getObjName).setHeader("Объект").setAutoWidth(true);
         gridPok.addColumn(DtoPokPu::getObjAddress).setHeader("Адресс").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getTypeDevice).setHeader("Тип ПУ").setAutoWidth(true);
-        Grid.Column<DtoPokPu> num =
-                gridPok.addColumn(DtoPokPu::getNumDevice)
-                        .setHeader("№ ПУ")
-                        .setSortable(true)
-                        .setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getRatio).setHeader("Коэф.").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getDate).setHeader("Дата").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getTzona).setHeader("Тарифная зона").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getMeter).setHeader("Показания").setAutoWidth(true);
+        gridPok.addColumn(DtoPokPu::getTypeDevice).setHeader("Тип ПУ")
+                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+        gridPok.addColumn(DtoPokPu::getNumDevice)
+                .setHeader("№ ПУ")
+                .setSortable(true)
+                .setAutoWidth(true)
+                .setTextAlign(ColumnTextAlign.CENTER);
+        VerticalLayout ltz = new VerticalLayout();
+        ltz.add(new Label("Тарифная"), new Label("зона"));
+        gridPok.addColumn(DtoPokPu::getRatio).setHeader("Коэф.")
+                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+        gridPok.addColumn(DtoPokPu::getDate).setHeader("Дата")
+                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+//        gridPok.addColumn(DtoPokPu::getTzona).setHeader("Тарифная зона").setAutoWidth(true);
+        gridPok.addColumn(DtoPokPu::getTzona).setHeader(ltz)
+                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+        gridPok.addColumn(DtoPokPu::getVid).setHeader("Вид")
+                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+        gridPok.addColumn(DtoPokPu::getMeter).setHeader("Показания")
+                .setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
         gridPokSetting();
         Collections.sort(pokPuDtoList);
         gridPok.setItems(pokPuDtoList);
@@ -145,25 +141,14 @@ public class DtoView extends Div implements BeforeEnterObserver {
                 gridSetting(null,"");
             }
         });
-        demandTypeSelect.setValue(null);
-        demandTypeSelect.addValueChangeListener(e -> {
-            Long id;
-            String text;
-            if(filterId.getValue().isEmpty()) id = null;
-            else id = Long.valueOf(filterId.getValue());
-            if(filterText.getParent().isEmpty()) text = "";
-            else text = filterText.getValue();
-            gridSetting(id,text);
-        });
         clearFilter.setText("Очистить фильтр");
         clearFilter.addClickListener(event -> {
             filterId.setValue("");
             filterText.setValue("");
             gridSetting(null,"");
-            demandTypeSelect.setValue(null);
         });
 
-        filterLayout.add(filterId,filterText, demandTypeSelect,clearFilter);
+        filterLayout.add(filterId,filterText,clearFilter);
         filterLayout.setAlignItems(FlexComponent.Alignment.BASELINE);
 //        grid.getElement().setAttribute("title","кликните дважды для открытия заявки");
         TextField space = new TextField();

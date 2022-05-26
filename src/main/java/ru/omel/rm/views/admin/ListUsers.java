@@ -9,11 +9,9 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.*;
 import org.springframework.security.core.context.SecurityContextHolder;
-import ru.omel.rm.data.entity.Point;
 import ru.omel.rm.data.entity.Role;
 import ru.omel.rm.data.entity.User;
 import ru.omel.rm.data.service.UserService;
-import ru.omel.rm.views.demandedit.DemandEditeGeneral;
 import ru.omel.rm.views.main.MainView;
 import ru.omel.rm.views.users.Profile;
 

@@ -22,12 +22,12 @@ public class Pok extends AbstractEntity {
     private String pdate;
 
     // VID_EN
-    @Column(length = 2, name = "vid_en")
+    @Column(length = 5, name = "vid_en")
     private String vidEn;
 
     // TZONA
-    @Column(length = 8)
-    private String tzona;
+    @Column(length = 8, name = "tz")
+    private String tz;
 
     // DATA
     @Column(length =13)
@@ -40,13 +40,13 @@ public class Pok extends AbstractEntity {
     public Pok(String ceId
             , String abId
             , String vidEn
-            , String pdate
-            , String tzona
+            , String pd
+            , String tz
             , String data) {
         this.abId = abId;
         this.vidEn = vidEn;
-        this.tzona = tzona;
-        this.pdate = pdate;
+        this.tz = tz;
+        this.pdate = pd;
         this.ceId = ceId;
         this.data = data;
     }
@@ -55,35 +55,23 @@ public class Pok extends AbstractEntity {
         return ceId;
     }
 
-    public void setCeId(String deviceId) {
-        this.ceId = deviceId;
-    }
-
     public String getPdate() {
         return pdate;
-    }
-
-    public void setPdate(String date) {
-        this.pdate = date;
     }
 
     public String getVidEn() {
         return vidEn;
     }
 
-    public void setVidEn(String typeEnergy) {
-        this.vidEn = typeEnergy;
-    }
-
-    public String getTzona() {
-        return tzona;
-    }
-
-    public void setTzona(String tzone) {
-        this.tzona = tzone;
+    public String getTz() {
+        return tz;
     }
 
     public String getData() {
         return data;
+    }
+
+    public String getAbId() {
+        return abId;
     }
 }

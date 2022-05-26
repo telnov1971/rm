@@ -23,10 +23,18 @@ public class PuService {
     }
 
     public Pu update(Pu pu) {
-        return puRepository.save(pu);
+        return puRepository.saveAndFlush(pu);
     }
 
     public void deleteAll() {
         puRepository.deleteAll();
+    }
+
+    public List<Pu> updateAll(List<Pu> pus) {
+        return puRepository.saveAll(pus);
+    }
+
+    public long getCount() {
+        return puRepository.count();
     }
 }

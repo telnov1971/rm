@@ -19,7 +19,7 @@ public class DogService {
     }
 
     public Dog update(Dog dog) {
-        return dogRepository.save(dog);
+        return dogRepository.saveAndFlush(dog);
     }
 
     public void deleteAll() {
@@ -30,4 +30,11 @@ public class DogService {
         return dogRepository.findAll();
     }
 
+    public List<Dog> updateAll(List<Dog> dogs) {
+        return dogRepository.saveAll(dogs);
+    }
+
+    public long getCount() {
+        return dogRepository.count();
+    }
 }

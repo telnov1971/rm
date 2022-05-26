@@ -12,6 +12,7 @@ public class DtoPokPu implements Comparable { // extends AbstractEntity {
     private String ratio;
     private String date;
     private String tzona;
+    private String vid;
     private String meter;
 
 //    public DtoPokPu() {
@@ -23,6 +24,7 @@ public class DtoPokPu implements Comparable { // extends AbstractEntity {
             , String ratio
             , String date
             , String tzona
+            , String vid
             , String meter) {
         this.objName = objName;
         this.objAddress = objAddress;
@@ -31,6 +33,7 @@ public class DtoPokPu implements Comparable { // extends AbstractEntity {
         this.ratio = ratio;
         this.date = date;
         this.tzona = tzona;
+        this.vid = vid;
         this.meter = meter;
     }
 
@@ -66,6 +69,10 @@ public class DtoPokPu implements Comparable { // extends AbstractEntity {
         return meter;
     }
 
+    public String getVid() {
+        return vid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,12 +85,13 @@ public class DtoPokPu implements Comparable { // extends AbstractEntity {
                 Objects.equals(this.ratio, entity.ratio) &&
                 Objects.equals(this.date, entity.date) &&
                 Objects.equals(this.tzona, entity.tzona) &&
+                Objects.equals(this.vid, entity.vid) &&
                 Objects.equals(this.meter, entity.meter);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(objName, objAddress, numDevice, typeDevice, ratio, date, tzona, meter);
+        return Objects.hash(objName, objAddress, numDevice, typeDevice, ratio, date, tzona, vid, meter);
     }
 
     @Override
@@ -96,6 +104,7 @@ public class DtoPokPu implements Comparable { // extends AbstractEntity {
                 "ratio = " + ratio +
                 "date = " + date +
                 "tzona = " + tzona +
+                "vid = " + vid +
                 "meter = " + meter + ")";
     }
 

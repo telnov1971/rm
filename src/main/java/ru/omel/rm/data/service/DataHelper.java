@@ -29,7 +29,8 @@ public class DataHelper {
                             , pu.getMarka()
                             , pu.getKoef()
                             , pok.getPdate()
-                            , pok.getTzona()
+                            , pok.getTz()
+                            , pok.getVidEn()
                             , pok.getData()
                     );
                     result.add(pokPuDto);

@@ -11,6 +11,7 @@ import ru.omel.rm.data.entity.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,6 +59,7 @@ public class DbLoadService {
     private void loadPok() {
         Pok pok;
         List<String> strs;
+        List<Pok> poks = new LinkedList<>();
         try {
             File file = new File("\\\\omel1s.omel.corp\\in\\lk_pok.csv");
             if(last.getDatePok() < file.lastModified()) {
@@ -77,8 +79,10 @@ public class DbLoadService {
                             , as[2].trim()
                             , as[1].substring(1, as[1].length() - 1).trim()
                             , as[0].trim());
-                    pokService.update(pok);
+//                    pokService.update(pok);
+                    poks.add(pok);
                 }
+                pokService.updateAll(poks);
                 last.setDatePok(file.lastModified());
                 lastService.update(last);
             }
@@ -90,6 +94,7 @@ public class DbLoadService {
     private void loadDog() {
         Dog dog;
         List<String> strs;
+        List<Dog> dogs = new LinkedList<>();
         try {
             File file = new File("\\\\omel1s.omel.corp\\in\\lk_dog.csv");
             if(last.getDateDog() < file.lastModified()) {
@@ -109,8 +114,10 @@ public class DbLoadService {
                             , as[2].substring(1, as[2].length() - 1).trim()
                             , as[3].trim()
                             , as[4].trim());
-                    dogService.update(dog);
+//                    dogService.update(dog);
+                    dogs.add(dog);
                 }
+                dogService.updateAll(dogs);
                 last.setDateDog(file.lastModified());
                 lastService.update(last);
             }
@@ -122,6 +129,7 @@ public class DbLoadService {
     private void loadPu(){
         Pu pu;
         List<String> strs;
+        List<Pu> pus = new LinkedList<>();
         try {
             File file = new File("\\\\omel1s.omel.corp\\in\\lk_pu.csv");
             if(last.getDatePu() < file.lastModified()) {
@@ -157,8 +165,10 @@ public class DbLoadService {
                             , as[8].substring(1, as[8].length() - 1).trim()
                             , as[6].trim()
                             , as[7].trim());
-                    puService.update(pu);
+//                    puService.update(pu);
+                    pus.add(pu);
                 }
+                puService.updateAll(pus);
                 last.setDatePu(file.lastModified());
                 lastService.update(last);
             }

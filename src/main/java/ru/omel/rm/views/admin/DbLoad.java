@@ -26,6 +26,7 @@ import ru.omel.rm.views.main.MainView;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,8 +94,10 @@ public class DbLoad extends Div implements BeforeEnterObserver {
     private void loadPok() {
         Pok pok;
         List<String> strs;
+        List<Pok> poks = new LinkedList<>();
         try {
             File file = new File("\\\\omel1s.omel.corp\\in\\lk_pok.csv");
+//            File file = new File("\\\\omel1s.omel.corp\\in\\pok.csv");
             if(last.getDatePok() < file.lastModified()) {
                 pokService.deleteAll();
                 InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "windows-1251");
@@ -105,18 +108,20 @@ public class DbLoad extends Div implements BeforeEnterObserver {
                     String[] as = s.split(";");
 //            // data,tzona,pdate,vid_en,ce_id,ab_id
 //            // 1128.406000,"",05.05.2022,"A+",31217778,2219201
-                    if (as[0].equals("data")) continue;
+//                    if (as[0].equals("data")) continue;
                     pok = new Pok(as[4].trim()
                             , as[5].trim()
                             , as[3].substring(1, as[3].length() - 1).trim()
                             , as[2].trim()
                             , as[1].substring(1, as[1].length() - 1).trim()
                             , as[0].trim());
-                    pokService.update(pok);
+                    poks.add(pok);
+//                    pokService.update(pok);
                 }
+                pokService.updateAll(poks);
                 last.setDatePok(file.lastModified());
                 lastService.update(last);
-                textPok.setValue(String.valueOf(strs.size()));
+                textPok.setValue(String.valueOf(pokService.getCount()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,6 +131,7 @@ public class DbLoad extends Div implements BeforeEnterObserver {
     private void loadDog() {
         Dog dog;
         List<String> strs;
+        List<Dog> dogs = new LinkedList<>();
         try {
             File file = new File("\\\\omel1s.omel.corp\\in\\lk_dog.csv");
             if(last.getDateDog() < file.lastModified()) {
@@ -138,18 +144,20 @@ public class DbLoad extends Div implements BeforeEnterObserver {
                     String[] as = s.split(";");
                     // ab_numgp,ab_num,ab_name,inn,ab_id
                     // Dog(String abNum, String abNumgp, String abName, String inn, String abId)
-                    if (as[0].equals("ab_numgp")) continue;
+//                    if (as[0].equals("ab_numgp")) continue;
                     dog = new Dog(
                             as[1].substring(1, as[1].length() - 1).trim()
                             , as[0].substring(1, as[0].length() - 1).trim()
                             , as[2].substring(1, as[2].length() - 1).trim()
                             , as[3].trim()
                             , as[4].trim());
-                    dogService.update(dog);
+//                    dogService.update(dog);
+                    dogs.add(dog);
                 }
+                dogService.updateAll(dogs);
                 last.setDateDog(file.lastModified());
                 lastService.update(last);
-                textDog.setValue(String.valueOf(strs.size()));
+                textDog.setValue(String.valueOf(dogService.getCount()));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -159,6 +167,7 @@ public class DbLoad extends Div implements BeforeEnterObserver {
     private void loadPu(){
         Pu pu;
         List<String> strs;
+        List<Pu> pus = new LinkedList<>();
         try {
             File file = new File("\\\\omel1s.omel.corp\\in\\lk_pu.csv");
             if(last.getDatePu() < file.lastModified()) {
@@ -182,7 +191,7 @@ public class DbLoad extends Div implements BeforeEnterObserver {
                     // ,10 ab_id 1
                     // "Магазин "Цветы"","Центральная 4/2","47866020383720","МИР С-05","-","-",1,0.0000,"СН2",31217996,2219202
 
-                    if (as[0].equals("ob_name")) continue;
+//                    if (as[0].equals("ob_name")) continue;
                     pu = new Pu(as[10].trim()
                             , as[9].trim()
                             , as[0].substring(1, as[0].length() - 1).trim()
@@ -194,11 +203,13 @@ public class DbLoad extends Div implements BeforeEnterObserver {
                             , as[8].substring(1, as[8].length() - 1).trim()
                             , as[6].trim()
                             , as[7].trim());
-                    puService.update(pu);
+//                    puService.update(pu);
+                    pus.add(pu);
                 }
+                puService.updateAll(pus);
                 last.setDatePu(file.lastModified());
                 lastService.update(last);
-                textPu.setValue(String.valueOf(strs.size()));
+                textPu.setValue(String.valueOf(puService.getCount()));
             }
         } catch (Exception e) {
             e.printStackTrace();

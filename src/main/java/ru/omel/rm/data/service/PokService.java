@@ -19,7 +19,11 @@ public class PokService {
     }
 
     public Pok update(Pok pok) {
-        return pokRepository.save(pok);
+        return pokRepository.saveAndFlush(pok);
+    }
+
+    public List<Pok> updateAll(List<Pok> poks){
+        return pokRepository.saveAll(poks);
     }
 
     public Optional<Pok> findByAbIdAndCeIdAndPdate(String ab_id, String ce_id, String pdate) {
@@ -28,5 +32,9 @@ public class PokService {
 
     public void deleteAll() {
         pokRepository.deleteAll();
+    }
+
+    public long getCount() {
+        return pokRepository.count();
     }
 }
