@@ -24,18 +24,23 @@ public class Contract extends AbstractEntity {
     private String INN;
 
     // AB_ID
-    @Column(name = "ext_id", length = 8)
-    private long extId;
+//    @Column(name = "ext_id", length = 8)
+//    private long extId;
 
     public Contract() {
     }
 
-    public Contract(String num, String numgp, String name, String INN, long extId) {
+    public Contract(String num
+            , String numgp
+            , String name
+            , String INN
+//            , long extId
+    ) {
         Num = num;
         Numgp = numgp;
         Name = name;
         this.INN = INN;
-        this.extId = extId;
+//        this.extId = extId;
     }
 
     public String getNum() {
@@ -70,11 +75,11 @@ public class Contract extends AbstractEntity {
         this.INN = INN;
     }
 
-    public long getExtId() {
-        return extId;
-    }
-
-    public void setExtId(long extId) {
-        this.extId = extId;
-    }
+//    public long getExtId() {
+//        return extId;
+//    }
+//
+//    public void setExtId(long extId) {
+//        this.extId = extId;
+//    }
 }

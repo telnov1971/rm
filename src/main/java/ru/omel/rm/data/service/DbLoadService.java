@@ -25,18 +25,29 @@ public class DbLoadService {
     private final PasswordEncoder passwordEncoder;
     private Last last;
 
+    private final ContractService contractService;
+    private final IndicationService indicationService;
+    private final MeterDeviceService meterDeviceService;
+
     public DbLoadService(DogService dogService
             , PokService pokService
             , PuService puService
             , UserService userService
             , LastService lastService
-            , PasswordEncoder passwordEncoder) {
+            , PasswordEncoder passwordEncoder
+            , ContractService contractService
+            , IndicationService indicationService
+            , MeterDeviceService meterDeviceService
+    ) {
         this.dogService = dogService;
         this.pokService = pokService;
         this.puService = puService;
         this.userService = userService;
         this.lastService = lastService;
         this.passwordEncoder = passwordEncoder;
+        this.contractService = contractService;
+        this.indicationService = indicationService;
+        this.meterDeviceService = meterDeviceService;
     }
 
     @Scheduled(fixedDelay = 1000*60*60*3)
@@ -51,6 +62,7 @@ public class DbLoadService {
         loadDog();
         loadPu();
         loadPok();
+//        writeContract();
         generateUsers();
         Logger logger = LoggerFactory.getLogger(getClass());
         logger.info("Данные загружены" + LocalDateTime.now());
@@ -205,4 +217,19 @@ public class DbLoadService {
         return newStr.toString();
     }
 
+//    private void writeContract(){
+//        List<Dog> dogs = dogService.findAll();
+//        Contract contract;
+//        for(Dog dog : dogs){
+//            contract = contractService.findByNum(dog.getAbNum());
+//            if(contract == null) {
+//                contract = new Contract();
+//            }
+//            contract.setNum(dog.getAbNum());
+//            contract.setName(dog.getAbName());
+//            contract.setNumgp(dog.getAbNumgp());
+//            contract.setINN(dog.getInn());
+////            contractService.save(contract);
+//        }
+//    }
 }
