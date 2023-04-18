@@ -37,4 +37,8 @@ public class PuService {
     public long getCount() {
         return puRepository.count();
     }
+
+    public List<Pu> findAll() {
+        return puRepository.findAll();
+    }
 }

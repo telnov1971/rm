@@ -1,14 +1,9 @@
 package ru.omel.rm.data.entity;
 
-import org.hibernate.annotations.DynamicUpdate;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
-@DynamicUpdate
+@Table(name = "meter_device")
 public class MeterDevice extends AbstractEntity {
     // AB_ID
     @ManyToOne(fetch = FetchType.EAGER)
@@ -50,6 +45,10 @@ public class MeterDevice extends AbstractEntity {
     @Column(length = 10)
     private String vltlName;
 
+    // CE_ID
+    @Column(name= "EXT_ID")
+    private Long extId;
+
     public MeterDevice() {
     }
 
@@ -62,7 +61,8 @@ public class MeterDevice extends AbstractEntity {
             , String tt
             , String koef
             , String prPot
-            , String vltlName) {
+            , String vltlName
+            , Long extId) {
         this.contract = contract;
         this.obName = obName;
         this.obAdres = obAdres;
@@ -73,6 +73,7 @@ public class MeterDevice extends AbstractEntity {
         this.koef = koef;
         this.prPot = prPot;
         this.vltlName = vltlName;
+        this.extId = extId;
     }
 
     public Contract getContract() {
@@ -153,5 +154,13 @@ public class MeterDevice extends AbstractEntity {
 
     public void setVltlName(String vltlName) {
         this.vltlName = vltlName;
+    }
+
+    public Long getExtId() {
+        return extId;
+    }
+
+    public void setExtId(Long extId) {
+        this.extId = extId;
     }
 }

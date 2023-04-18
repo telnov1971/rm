@@ -1,15 +1,15 @@
 package ru.omel.rm.data.entity;
 
-import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-@DynamicUpdate
+@Table(name = "contract")
 public class Contract extends AbstractEntity {
     @Column(name = "num", length = 20)
-    private String Num;
+    private String strNumber;
 
     // AB_NUMGP
     @Column(name = "numgp", length = 22)
@@ -17,38 +17,38 @@ public class Contract extends AbstractEntity {
 
     // AB_NAME
     @Column(name = "name", length = 200)
-    private String Name;
+    private String strName;
 
     // INN
     @Column(length = 12)
     private String INN;
 
     // AB_ID
-//    @Column(name = "ext_id", length = 8)
-//    private long extId;
+    @Column(name = "ext_id", length = 8)
+    private long extId;
 
     public Contract() {
     }
 
-    public Contract(String num
+    public Contract(String strNumber
             , String numgp
-            , String name
+            , String strName
             , String INN
-//            , long extId
+            , long extId
     ) {
-        Num = num;
+        this.strNumber = strNumber;
         Numgp = numgp;
-        Name = name;
+        this.strName = strName;
         this.INN = INN;
-//        this.extId = extId;
+        this.extId = extId;
     }
 
-    public String getNum() {
-        return Num;
+    public String getStrNumber() {
+        return strNumber;
     }
 
-    public void setNum(String num) {
-        Num = num;
+    public void setStrNumber(String strNumber) {
+        this.strNumber = strNumber;
     }
 
     public String getNumgp() {
@@ -59,12 +59,12 @@ public class Contract extends AbstractEntity {
         Numgp = numgp;
     }
 
-    public String getName() {
-        return Name;
+    public String getStrName() {
+        return strName;
     }
 
-    public void setName(String name) {
-        Name = name;
+    public void setStrName(String strName) {
+        this.strName = strName;
     }
 
     public String getINN() {
@@ -75,11 +75,11 @@ public class Contract extends AbstractEntity {
         this.INN = INN;
     }
 
-//    public long getExtId() {
-//        return extId;
-//    }
-//
-//    public void setExtId(long extId) {
-//        this.extId = extId;
-//    }
+    public long getExtId() {
+        return extId;
+    }
+
+    public void setExtId(long extId) {
+        this.extId = extId;
+    }
 }

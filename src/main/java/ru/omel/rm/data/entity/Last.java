@@ -1,6 +1,6 @@
 package ru.omel.rm.data.entity;
 
-import ru.omel.rm.data.AbstractEntity;
+import ru.omel.rm.data.entity.AbstractEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

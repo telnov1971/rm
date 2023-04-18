@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.sql.Date;
 
 @Entity
-@DynamicUpdate
 public class Indication extends AbstractEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -1,6 +1,5 @@
 package ru.omel.rm.data.entity;
 
-import ru.omel.rm.data.AbstractEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

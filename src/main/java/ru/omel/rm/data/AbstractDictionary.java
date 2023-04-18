@@ -1,5 +1,7 @@
 package ru.omel.rm.data;
 
+import ru.omel.rm.data.entity.AbstractEntity;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 

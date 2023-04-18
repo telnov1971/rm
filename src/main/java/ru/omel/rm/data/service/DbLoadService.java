@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,7 +54,7 @@ public class DbLoadService {
     @Scheduled(fixedDelay = 1000*60*60*3)
 //    @Scheduled(cron = "10 * * * 1-5 *")
 //    @SchedulerLock(name = "scheduledTaskName")
-    void loadData() throws FileNotFoundException {
+    public void loadData() throws FileNotFoundException {
         if(lastService.getLast(1L).isPresent()){
             last = lastService.getLast(1L).get();
         } else {
@@ -62,7 +63,6 @@ public class DbLoadService {
         loadDog();
         loadPu();
         loadPok();
-//        writeContract();
         generateUsers();
         Logger logger = LoggerFactory.getLogger(getClass());
         logger.info("Данные загружены" + LocalDateTime.now());
@@ -136,6 +136,24 @@ public class DbLoadService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        writeContract();
+    }
+
+    private void writeContract() {
+        List<Dog> dogList = dogService.findAll();
+        Contract newContract;
+        for(Dog dog : dogList) {
+            Optional<Contract> contract = contractService.findByStrNumber(dog.getAbNum());
+            if(!contract.isPresent()) {
+                newContract = new Contract();
+                newContract.setStrNumber(dog.getAbNum());
+                newContract.setStrName(dog.getAbName());
+                newContract.setNumgp(dog.getAbNumgp());
+                newContract.setINN(dog.getInn());
+                newContract.setExtId(Long.valueOf(dog.getAbId()));
+                contractService.save(newContract);
+            }
+        }
     }
 
     private void loadPu(){
@@ -184,8 +202,37 @@ public class DbLoadService {
                 last.setDatePu(file.lastModified());
                 lastService.update(last);
             }
+            writeMeterDevice();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void writeMeterDevice(){
+        List<Pu> puList = puService.findAll();
+        Optional<MeterDevice> meterDevice;
+        MeterDevice mt;
+        for(Pu pu : puList){
+            meterDevice = meterDeviceService.findByExtId(
+                    Long.valueOf(pu.getCeId()));
+            if(meterDevice.isEmpty()){
+                mt = new MeterDevice();
+                mt.setContract(contractService.findByExtId(
+                        Long.valueOf(pu.getAbId())));
+                mt.setExtId(Long.valueOf(pu.getCeId()));
+            } else {
+                mt = meterDevice.get();
+            }
+            mt.setKoef(pu.getKoef());
+            mt.setMarka(pu.getMarka());
+            mt.setNomPu(pu.getNomPu());
+            mt.setObAdres(pu.getObAdres());
+            mt.setObName(pu.getObName());
+            mt.setPrPot(pu.getPrPot());
+            mt.setTn(pu.getTn());
+            mt.setTt(pu.getTt());
+            mt.setVltlName(pu.getVltlName());
+            meterDeviceService.save(mt);
         }
     }
 
@@ -216,20 +263,4 @@ public class DbLoadService {
         }
         return newStr.toString();
     }
-
-//    private void writeContract(){
-//        List<Dog> dogs = dogService.findAll();
-//        Contract contract;
-//        for(Dog dog : dogs){
-//            contract = contractService.findByNum(dog.getAbNum());
-//            if(contract == null) {
-//                contract = new Contract();
-//            }
-//            contract.setNum(dog.getAbNum());
-//            contract.setName(dog.getAbName());
-//            contract.setNumgp(dog.getAbNumgp());
-//            contract.setINN(dog.getInn());
-////            contractService.save(contract);
-//        }
-//    }
 }
