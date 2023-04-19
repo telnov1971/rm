@@ -9,6 +9,9 @@ import ru.omel.rm.data.entity.*;
 
 
 import java.io.*;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -98,11 +101,47 @@ public class DbLoadService {
                 last.setDatePok(file.lastModified());
                 lastService.update(last);
             }
+            writeIndication();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void writeIndication() throws ParseException {
+        List<Pok> pokList = pokService.findAll();
+        Optional<Indication> indication;
+        Indication ind;
+        MeterDevice mt;
+        for(Pok p : pokList){
+            if((meterDeviceService.findByExtId(
+                        Long.valueOf(p.getCeId())))
+                    .isPresent()){
+                mt = (meterDeviceService.findByExtId(
+                        Long.valueOf(p.getCeId()))).get();
+            } else {
+                continue;
+            };
+            indication = indicationService.
+                    findByIdMeterDeviceAndDate(
+                            mt
+                            , new java.sql.Date(
+                                    (new SimpleDateFormat("dd.MM.yyyy")
+                                            .parse(p.getPdate()).getTime())));
+            if(indication.isEmpty()){
+                ind = new Indication();
+                ind.setIdMeterDevice(mt);
+                ind.setDate(new java.sql.Date(
+                        (new SimpleDateFormat("dd.MM.yyyy")
+                                .parse(p.getPdate()).getTime())));
+            } else {
+                ind = indication.get();
+            }
+            ind.setData(p.getData());
+            ind.setTz(p.getTz());
+            ind.setVidEn(p.getVidEn());
+            indicationService.save(ind);
+        }
+    }
     private void loadDog() {
         Dog dog;
         List<String> strs;
@@ -138,7 +177,6 @@ public class DbLoadService {
         }
         writeContract();
     }
-
     private void writeContract() {
         List<Dog> dogList = dogService.findAll();
         Contract newContract;
@@ -155,7 +193,6 @@ public class DbLoadService {
             }
         }
     }
-
     private void loadPu(){
         Pu pu;
         List<String> strs;
@@ -207,7 +244,6 @@ public class DbLoadService {
             e.printStackTrace();
         }
     }
-
     private void writeMeterDevice(){
         List<Pu> puList = puService.findAll();
         Optional<MeterDevice> meterDevice;

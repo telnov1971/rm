@@ -37,4 +37,8 @@ public class PokService {
     public long getCount() {
         return pokRepository.count();
     }
+
+    public List<Pok> findAll() {
+        return pokRepository.findAll();
+    }
 }

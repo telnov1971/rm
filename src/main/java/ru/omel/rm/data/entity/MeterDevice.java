@@ -46,7 +46,7 @@ public class MeterDevice extends AbstractEntity {
     private String vltlName;
 
     // CE_ID
-    @Column(name= "EXT_ID")
+    @Column(name= "ext_id")
     private Long extId;
 
     public MeterDevice() {

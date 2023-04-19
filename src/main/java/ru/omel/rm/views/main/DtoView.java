@@ -14,19 +14,15 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.*;
-import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
+import ru.omel.rm.data.dto.DtoIndMet;
 import ru.omel.rm.data.dto.DtoPokPu;
 import ru.omel.rm.data.entity.*;
 import ru.omel.rm.data.service.*;
-import ru.omel.rm.views.admin.ListUsers;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @PageTitle("Показания счетчиков")
@@ -36,12 +32,18 @@ public class DtoView extends Div implements BeforeEnterObserver {
     private final TextField filterId = new TextField();
     private final TextField filterText = new TextField();
     private final Button clearFilter = new Button(new Icon(VaadinIcon.ERASER));
-    private final Grid<DtoPokPu> gridPok = new Grid<>(DtoPokPu.class, false);
+//    private final Grid<DtoPokPu> gridPok = new Grid<>(DtoPokPu.class, false);
+    private final Grid<DtoIndMet> gridIndMet = new Grid<>(DtoIndMet.class, false);
 
-    private List<DtoPokPu> pokPuDtoList = new LinkedList<>();
-    private final DogService dogService;
-    private final PuService puService;
-    private final PokService pokService;
+//    private List<DtoPokPu> pokPuDtoList = new LinkedList<>();
+    private List<DtoIndMet> dtoIndMetList = new LinkedList<>();
+//    private final DogService dogService;
+//    private final PuService puService;
+//    private final PokService pokService;
+
+    private final ContractService contractService;
+    private final MeterDeviceService meterDeviceService;
+    private final IndicationService indicationService;
 
     private final Label tNumber = new Label();
     private final Label tNum = new Label();
@@ -54,9 +56,19 @@ public class DtoView extends Div implements BeforeEnterObserver {
     private User currentUser;
     //@Autowired
     public DtoView(UserService userService
-            , DogService dogService
-            , PuService puService
-            , PokService pokService) {
+//            , DogService dogService
+//            , PuService puService
+//            , PokService pokService
+            , ContractService contractService
+            , MeterDeviceService meterDeviceService
+            , IndicationService indicationService) {
+        this.userService = userService;
+//        this.dogService = dogService;
+//        this.pokService = pokService;
+//        this.puService = puService;
+        this.contractService = contractService;
+        this.meterDeviceService = meterDeviceService;
+        this.indicationService = indicationService;
         HorizontalLayout filterLayout = new HorizontalLayout();
         HorizontalLayout header = new HorizontalLayout();
         VerticalLayout vlLabel = new VerticalLayout();
@@ -69,10 +81,6 @@ public class DtoView extends Div implements BeforeEnterObserver {
         vlDog.add(tNumber,tNum,tName,tInn);
         header.add(vlLabel,vlDog);
         filterLayout.getElement().getStyle().set("margin", "10px");
-        this.userService = userService;
-        this.dogService = dogService;
-        this.pokService = pokService;
-        this.puService = puService;
         addClassNames("master-detail-view", "flex", "flex-col", "h-full");
 
         // Configure Grid
@@ -80,36 +88,69 @@ public class DtoView extends Div implements BeforeEnterObserver {
 
         gridSetting(null,"");
 
-        pokPuDtoList = DataHelper.createTable("1-0073",
-                dogService, puService, pokService);
+//        pokPuDtoList = DataHelper.createTable("1-0073",
+//                dogService, puService, pokService);
+        dtoIndMetList = DataHelper.createTableIndMet("1-0073",
+                contractService,meterDeviceService,indicationService);
 
-        gridPok.addColumn(DtoPokPu::getObjName).setHeader("Объект").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getObjAddress).setHeader("Адресс").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getTypeDevice).setHeader("Тип ПУ")
+//        gridPok.addColumn(DtoPokPu::getObjName).setHeader("Объект").setAutoWidth(true);
+//        gridPok.addColumn(DtoPokPu::getObjAddress).setHeader("Адресс").setAutoWidth(true);
+//        gridPok.addColumn(DtoPokPu::getTypeDevice).setHeader("Тип ПУ")
+//                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+//        gridPok.addColumn(DtoPokPu::getNumDevice)
+//                .setHeader("№ ПУ")
+//                .setSortable(true)
+//                .setAutoWidth(true)
+//                .setTextAlign(ColumnTextAlign.CENTER);
+        VerticalLayout ltz = new VerticalLayout();
+        ltz.add(new Label("Тарифная"), new Label("зона"));
+//        gridPok.addColumn(DtoPokPu::getRatio).setHeader("Коэф.")
+//                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+//        gridPok.addColumn(DtoPokPu::getDate).setHeader("Дата")
+//                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+//        gridPok.addColumn(DtoPokPu::getTzona).setHeader("Тарифная зона").setAutoWidth(true);
+//        gridPok.addColumn(DtoPokPu::getTzona).setHeader(ltz)
+//                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+//        gridPok.addColumn(DtoPokPu::getVid).setHeader("Вид")
+//                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
+//        gridPok.addColumn(DtoPokPu::getMeter).setHeader("Показания")
+//                .setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
+//        gridPokSetting();
+//        Collections.sort(pokPuDtoList);
+//        gridPok.setItems(pokPuDtoList);
+//        gridPok.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+
+        //
+        gridIndMet.addColumn(DtoIndMet::getObjName)
+                .setHeader("Объект")
+                .setSortable(true)
+                .setAutoWidth(true);
+        gridIndMet.addColumn(DtoIndMet::getObjAddress).setHeader("Адресс").setAutoWidth(true);
+        gridIndMet.addColumn(DtoIndMet::getTypeDevice).setHeader("Тип ПУ")
                 .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
-        gridPok.addColumn(DtoPokPu::getNumDevice)
+        gridIndMet.addColumn(DtoIndMet::getNumDevice)
                 .setHeader("№ ПУ")
                 .setSortable(true)
                 .setAutoWidth(true)
                 .setTextAlign(ColumnTextAlign.CENTER);
-        VerticalLayout ltz = new VerticalLayout();
-        ltz.add(new Label("Тарифная"), new Label("зона"));
-        gridPok.addColumn(DtoPokPu::getRatio).setHeader("Коэф.")
+        gridIndMet.addColumn(DtoIndMet::getRatio).setHeader("Коэф.")
                 .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
-        gridPok.addColumn(DtoPokPu::getDate).setHeader("Дата")
+        gridIndMet.addColumn(DtoIndMet::getDate)
+                .setHeader("Дата")
+                .setAutoWidth(true)
+                .setSortable(true)
+                .setTextAlign(ColumnTextAlign.CENTER);
+        gridIndMet.addColumn(DtoIndMet::getTzona).setHeader(ltz)
                 .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
-//        gridPok.addColumn(DtoPokPu::getTzona).setHeader("Тарифная зона").setAutoWidth(true);
-        gridPok.addColumn(DtoPokPu::getTzona).setHeader(ltz)
+        gridIndMet.addColumn(DtoIndMet::getVid).setHeader("Вид")
                 .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
-        gridPok.addColumn(DtoPokPu::getVid).setHeader("Вид")
-                .setAutoWidth(true).setTextAlign(ColumnTextAlign.CENTER);
-        gridPok.addColumn(DtoPokPu::getMeter).setHeader("Показания")
+        gridIndMet.addColumn(DtoIndMet::getMeter).setHeader("Показания")
                 .setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
-        gridPokSetting();
-        Collections.sort(pokPuDtoList);
-        gridPok.setItems(pokPuDtoList);
-        gridPok.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
-
+        gridIndSetting();
+        Collections.sort(dtoIndMetList);
+        gridIndMet.setItems(dtoIndMetList);
+        gridIndMet.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+//
         filterId.setLabel("Поиск по номеру задачи");
         filterId.setHelperText("После ввода номера нажмите Enter");
         filterId.setPlaceholder("Номер заявки");
@@ -155,22 +196,40 @@ public class DtoView extends Div implements BeforeEnterObserver {
         space.setWidthFull();
         space.setReadOnly(true);
 
-        add(header,gridPok,space);
+        add(header,gridIndMet,space);
     }
 
-    private void gridPokSetting() {
+//    private void gridPokSetting() {
+//        User currentUser =  this.userService.findByUsername(
+//                SecurityContextHolder.getContext().getAuthentication().getName()
+//        );
+//        gridPok.setPageSize(20);
+//        pokPuDtoList = DataHelper.createTable(currentUser.getUsername(),
+//                dogService, puService, pokService);
+//        if(dogService.findByAbNum(currentUser.getUsername()).isPresent()){
+//            Dog currentDog = dogService.findByAbNum(currentUser.getUsername()).get();
+//            tNumber.setText(currentDog.getAbNumgp());
+//            tNum.setText(currentDog.getAbNum());
+//            tName.setText(currentDog.getAbName());
+//            tInn.setText(currentDog.getInn());
+//        }
+//
+//    }
+
+    private void gridIndSetting() {
         User currentUser =  this.userService.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
         );
-        gridPok.setPageSize(20);
-        pokPuDtoList = DataHelper.createTable(currentUser.getUsername(),
-                dogService, puService, pokService);
-        if(dogService.findByAbNum(currentUser.getUsername()).isPresent()){
-            Dog currentDog = dogService.findByAbNum(currentUser.getUsername()).get();
-            tNumber.setText(currentDog.getAbNumgp());
-            tNum.setText(currentDog.getAbNum());
-            tName.setText(currentDog.getAbName());
-            tInn.setText(currentDog.getInn());
+        gridIndMet.setPageSize(20);
+        dtoIndMetList = DataHelper.createTableIndMet(currentUser.getUsername(),
+                contractService, meterDeviceService, indicationService);
+        if(contractService.findByStrNumber(currentUser.getUsername()).isPresent()){
+            Contract currentContract = contractService
+                    .findByStrNumber(currentUser.getUsername()).get();
+            tNumber.setText(currentContract.getNumgp());
+            tNum.setText(currentContract.getStrNumber());
+            tName.setText(currentContract.getStrName());
+            tInn.setText(currentContract.getINN());
         }
 
     }
@@ -182,7 +241,8 @@ public class DtoView extends Div implements BeforeEnterObserver {
         );
         currentUser.setVisitDate(LocalDateTime.now());
         userService.update(currentUser);
-        gridPok.setPageSize(20);
+//        gridPok.setPageSize(20);
+        gridIndMet.setPageSize(20);
 //        grid.setSortableColumns("id","object","address");
         // вывод всех заявок доступных пользователю
     }

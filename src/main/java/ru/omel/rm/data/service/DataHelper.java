@@ -1,9 +1,8 @@
 package ru.omel.rm.data.service;
 
+import ru.omel.rm.data.dto.DtoIndMet;
 import ru.omel.rm.data.dto.DtoPokPu;
-import ru.omel.rm.data.entity.Dog;
-import ru.omel.rm.data.entity.Pok;
-import ru.omel.rm.data.entity.Pu;
+import ru.omel.rm.data.entity.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -39,4 +38,37 @@ public class DataHelper {
         }
         return result;
     }
+
+    public static List<DtoIndMet> createTableIndMet(String num
+            , ContractService contractService
+            , MeterDeviceService meterDeviceService
+            , IndicationService indicationService) {
+        Contract contract;
+        List<DtoIndMet> result = new LinkedList<>();
+
+        if(contractService.findByStrNumber(num).isPresent()) {
+            contract = contractService.findByStrNumber(num).get();
+            List<MeterDevice> mtList = meterDeviceService
+                    .findByContract(contract);
+            for(MeterDevice mt : mtList) {
+                List<Indication> indications = indicationService.findByIdMeterDevice(mt);
+                for(Indication ind : indications) {
+                    DtoIndMet indMetDto = new DtoIndMet(
+                            mt.getObName()
+                            , mt.getObAdres()
+                            , mt.getNomPu()
+                            , mt.getMarka()
+                            , mt.getKoef()
+                            , ind.getDate()
+                            , ind.getTz()
+                            , ind.getVidEn()
+                            , ind.getData()
+                    );
+                    result.add(indMetDto);
+                }
+            }
+        }
+        return result;
+    }
+
 }

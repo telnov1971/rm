@@ -13,9 +13,9 @@ public class Indication extends AbstractEntity {
     private MeterDevice idMeterDevice;
 
     // AB_ID
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_contract")
-    private Contract idContract;
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "id_contract")
+//    private Contract idContract;
 
     // PDATE
     private Date date;
@@ -42,7 +42,7 @@ public class Indication extends AbstractEntity {
             , String tz
             , String data) {
         this.idMeterDevice = idMeterDevice;
-        this.idContract = idContract;
+//        this.idContract = idContract;
         this.date = date;
         this.vidEn = vidEn;
         this.tz = tz;
@@ -57,13 +57,13 @@ public class Indication extends AbstractEntity {
         this.idMeterDevice = idMeterDevice;
     }
 
-    public Contract getIdContract() {
-        return idContract;
-    }
-
-    public void setIdContract(Contract idContract) {
-        this.idContract = idContract;
-    }
+//    public Contract getIdContract() {
+//        return idContract;
+//    }
+//
+//    public void setIdContract(Contract idContract) {
+//        this.idContract = idContract;
+//    }
 
     public Date getDate() {
         return date;

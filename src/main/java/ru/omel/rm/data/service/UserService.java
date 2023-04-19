@@ -52,4 +52,8 @@ public class UserService extends CrudService<User, Long> implements UserDetailsS
     public List<User> findAll() {
         return userRepository.findAll();
     }
+
+    public List<User> findText(String text) {
+        return userRepository.search(text);
+    }
 }
