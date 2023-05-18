@@ -11,7 +11,6 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.router.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import ru.omel.rm.data.entity.Role;
@@ -21,39 +20,38 @@ import ru.omel.rm.views.main.MainView;
 import ru.omel.rm.views.users.Profile;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.WeakHashMap;
 
 @PageTitle("Показания счетчиков")
 @Route(value = "users", layout = MainView.class)
 public class ListUsers  extends Div implements BeforeEnterObserver {
     private final UserService userService;
     private final TextField filterText = new TextField();
-    private final Button clearFilter = new Button(new Icon(VaadinIcon.ERASER));
 
-    private List<User> users = new ArrayList<>();
-    private Grid<User> grid = new Grid<>(User.class, false);
-    private ListDataProvider<User> userDataProvider;
+    private final Grid<User> grid = new Grid<>(User.class, false);
+//    private ListDataProvider<User> userDataProvider;
 
     public ListUsers(UserService userService) {
         HorizontalLayout filterLayout = new HorizontalLayout();
         filterLayout.getElement().getStyle().set("margin", "10px");
 
         this.userService = userService;
-        grid.setHeightByRows(true);
+        grid.setAllRowsVisible(true);
         Collection<Button> editButtons = Collections.newSetFromMap(new WeakHashMap<>());
-        Grid.Column<User> columnUsername =
-                grid.addColumn(User::getUsername)
-                        .setHeader("Пользователь")
-                        .setResizable(true)
-                        .setAutoWidth(true);
-        Grid.Column<User> editorColumn = grid.addComponentColumn(user -> {
+        grid.addColumn(User::getUsername)
+                .setHeader("Пользователь")
+                .setResizable(true)
+                .setAutoWidth(true);
+        grid.addComponentColumn(user -> {
             Button edit = new Button(new Icon(VaadinIcon.EDIT));
             edit.addClassName("edit");
             edit.getElement().setAttribute("title","открыть");
-            edit.addClickListener(e -> {
-                UI.getCurrent().navigate(Profile.class, new RouteParameters("userID",
-                        String.valueOf(user.getId())));
-            });
+            edit.addClickListener(e -> UI.getCurrent()
+                    .navigate(Profile.class, new RouteParameters("userID",
+                    String.valueOf(user.getId()))));
             editButtons.add(edit);
             return edit;
 
@@ -71,6 +69,7 @@ public class ListUsers  extends Div implements BeforeEnterObserver {
                 gridSetting("");
             }
         });
+        Button clearFilter = new Button(new Icon(VaadinIcon.ERASER));
         clearFilter.setText("Очистить фильтр");
         clearFilter.addClickListener(event -> {
             filterText.setValue("");
@@ -83,7 +82,6 @@ public class ListUsers  extends Div implements BeforeEnterObserver {
     }
 
     private void gridSetting(String text) {
-        Role role = Role.ANONYMOUS;
         // Определим текущего пользователя
         User currentUser =  this.userService.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
@@ -104,7 +102,6 @@ public class ListUsers  extends Div implements BeforeEnterObserver {
                         Notification.Position.MIDDLE);
                 notification.open();
             }
-            return;
         }
     }
 
@@ -116,7 +113,7 @@ public class ListUsers  extends Div implements BeforeEnterObserver {
         if(!currentUser.getRoles().contains(Role.ADMIN)) {
             if(UI.getCurrent()!=null) UI.getCurrent().navigate("/meters");
         } else {
-            users = userService.findAll();
+            List<User> users = userService.findAll();
             grid.setItems(users);
         }
     }

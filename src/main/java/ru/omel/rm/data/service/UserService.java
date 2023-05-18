@@ -34,20 +34,20 @@ public class UserService extends CrudService<User, Long> implements UserDetailsS
     public Optional<User> findById(Long aLong) {
         return userRepository.findById(aLong);
     }
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+//    public User findByEmail(String email) {
+//        return userRepository.findByEmail(email);
+//    }
 
 
-    public void activate(String code) {
-        User user = userRepository.findByActivationCode(code);
-        try {
-            user.setActive(true);
-            user.setActivationCode("");
-            userRepository.save(user);
-        } catch(Exception ignored) {
-        }
-    }
+//    public void activate(String code) {
+//        User user = userRepository.findByActivationCode(code);
+//        try {
+//            user.setActive(true);
+//            user.setActivationCode("");
+//            userRepository.save(user);
+//        } catch(Exception ignored) {
+//        }
+//    }
 
     public List<User> findAll() {
         return userRepository.findAll();

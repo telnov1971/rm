@@ -28,19 +28,16 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver {
                      CustomRequestCache requestCache) {
         addClassName("login-view");
         setSizeFull();
-        //setAlignItems(Alignment.CENTER);
         setJustifyContentMode(JustifyContentMode.CENTER);
         setHorizontalComponentAlignment(Alignment.CENTER);
-        //login.setOpened(true);
-        //login.setTitle("Вход в личный кабинет");
         login.setI18n(createRussianLoginI18n());
         login.setAction("login");
-//        login.addForgotPasswordListener(event -> {
-//            //login.close();
-//            UI.getCurrent().navigate(Profile.class);
-//        });
 
-        add(login);
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setAlignItems(Alignment.CENTER);
+        verticalLayout.setAlignSelf(Alignment.CENTER);
+        verticalLayout.add(login);
+        add(verticalLayout);
 
         login.addLoginListener(e -> {
             try{
