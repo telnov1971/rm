@@ -26,7 +26,7 @@ public class ContractService {
         contractRepository.save(contract);
     }
 
-    public Contract findByExtId(Long valueOf) {
+    public Optional<Contract> findByExtId(Long valueOf) {
         return contractRepository.findByExtId(valueOf);
     }
 }

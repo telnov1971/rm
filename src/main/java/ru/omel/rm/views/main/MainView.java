@@ -20,6 +20,9 @@ import ru.omel.rm.views.admin.DbLoad;
 import ru.omel.rm.views.admin.ListUsers;
 import ru.omel.rm.views.users.Profile;
 
+import static ru.omel.rm.data.entity.Role.ADMIN;
+import static ru.omel.rm.data.entity.Role.USER;
+
 /**
  * The main view is a top-level placeholder for other views.
  */
@@ -33,29 +36,14 @@ public class MainView extends AppLayout {
     private RouterLink admin;
     private RouterLink dbload;
 
-    public static class MenuItemInfo {
+    private static final String GLOBE_SOLID = "globe-solid";
+    private static final String TEXT_SECONDARY = "text-secondary";
+    private static final String ITEMS_CENTER = "items-center";
 
-        private final String text;
-        private final String iconClass;
-        private final Class<? extends Component> view;
-
-        public MenuItemInfo(String text, String iconClass, Class<? extends Component> view) {
-            this.text = text;
-            this.iconClass = iconClass;
-            this.view = view;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public String getIconClass() {
-            return iconClass;
-        }
-
-        public Class<? extends Component> getView() {
-            return view;
-        }
+    public record MenuItemInfo(
+            String text,
+            String iconClass,
+            Class<? extends Component> view) {
 
     }
 
@@ -68,7 +56,7 @@ public class MainView extends AppLayout {
 
     private Component createHeaderContent() {
         DrawerToggle toggle = new DrawerToggle();
-        toggle.addClassName("text-secondary");
+        toggle.addClassName(TEXT_SECONDARY);
         toggle.addThemeVariants(ButtonVariant.LUMO_CONTRAST);
         toggle.getElement().setAttribute("aria-label", "Menu toggle");
         toggle.getElement().setAttribute("title","Меню");
@@ -77,7 +65,7 @@ public class MainView extends AppLayout {
         viewTitle.addClassNames("m-0", "text-l");
 
         Header header = new Header(toggle, viewTitle);
-        header.addClassNames("bg-base", "border-b", "border-contrast-10", "box-border", "flex", "h-xl", "items-center",
+        header.addClassNames("bg-base", "border-b", "border-contrast-10", "box-border", "flex", "h-xl", ITEMS_CENTER,
                 "w-full");
         return header;
     }
@@ -89,7 +77,7 @@ public class MainView extends AppLayout {
         logo.getElement().getStyle().set("padding", "10px");
         H2 appName = new H2("Показания счётчиков");
         main.add(logo,appName);
-        appName.addClassNames("flex", "items-center", "h-xl", "m-0", "px-m", "text-m");
+        appName.addClassNames("flex", ITEMS_CENTER, "h-xl", "m-0", "px-m", "text-m");
 
         com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section(
                 main, createNavigation(), createFooter());
@@ -115,7 +103,7 @@ public class MainView extends AppLayout {
             if(getUI().isPresent()){
                 UI ui = getUI().get();
                 ui.getSession().getSession().invalidate();
-                if(ui.getCurrent()!=null) ui.getCurrent().navigate("/");
+                if(UI.getCurrent()!=null) UI.getCurrent().navigate("/");
             }
         });
         button.getElement().setAttribute("title","Выход");
@@ -126,17 +114,17 @@ public class MainView extends AppLayout {
     }
 
     private RouterLink createLinksList() {
-        MenuItemInfo menuItem = new MenuItemInfo("Показания счётчиков", "globe-solid", DtoView.class);
+        MenuItemInfo menuItem = new MenuItemInfo("Показания счётчиков", GLOBE_SOLID, DtoView.class);
         return createLink(menuItem);
     }
 
     private RouterLink createLinksAdmin() {
-        MenuItemInfo menuItem = new MenuItemInfo("Список пользователей", "globe-solid", ListUsers.class);
+        MenuItemInfo menuItem = new MenuItemInfo("Список пользователей", GLOBE_SOLID, ListUsers.class);
         return createLink(menuItem);
     }
 
     private RouterLink createLinksDbLoad() {
-        MenuItemInfo menuItem = new MenuItemInfo("Загрузка данных", "globe-solid", DbLoad.class);
+        MenuItemInfo menuItem = new MenuItemInfo("Загрузка данных", GLOBE_SOLID, DbLoad.class);
         return createLink(menuItem);
     }
     private RouterLink createLinksProfile() {
@@ -146,16 +134,16 @@ public class MainView extends AppLayout {
 
     private static RouterLink createLink(MenuItemInfo menuItemInfo) {
         RouterLink link = new RouterLink();
-        link.addClassNames("flex", "mx-s", "p-s", "relative", "text-secondary");
-        link.setRoute(menuItemInfo.getView());
+        link.addClassNames("flex", "mx-s", "p-s", "relative", TEXT_SECONDARY);
+        link.setRoute(menuItemInfo.view());
 
         Span icon = new Span();
         icon.addClassNames("me-s", "text-l");
-        if (!menuItemInfo.getIconClass().isEmpty()) {
-            icon.addClassNames(menuItemInfo.getIconClass());
+        if (!menuItemInfo.iconClass().isEmpty()) {
+            icon.addClassNames(menuItemInfo.iconClass());
         }
 
-        Span text = new Span(menuItemInfo.getText());
+        Span text = new Span(menuItemInfo.text());
         text.addClassNames("font-medium", "text-s");
 
         link.add(icon, text);
@@ -164,10 +152,10 @@ public class MainView extends AppLayout {
 
     private Footer createFooter() {
         Footer layout = new Footer();
-        layout.addClassNames("flex", "items-center", "my-s", "px-m", "py-xs");
+        layout.addClassNames("flex", ITEMS_CENTER, "my-s", "px-m", "py-xs");
 
         Label support = new Label("По всем вопросам звонить по тел.: xx-xx-xx.");
-        support.addClassNames("flex", "mx-s", "p-s", "relative", "text-secondary");
+        support.addClassNames("flex", "mx-s", "p-s", "relative", TEXT_SECONDARY);
         support.getElement().getStyle().set("font-size","0.8em");
         layout.add(support);
 
@@ -181,22 +169,20 @@ public class MainView extends AppLayout {
         User currentUser = userService.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName());
         if (currentUser != null) {
-            Role role = currentUser.getRoles().contains(Role.ADMIN) ?
-                    Role.ADMIN :
-                    Role.USER;
-            switch (role) {
-                case ADMIN:
-                    meter.setVisible(false);
-                    profile.setVisible(true);
-                    admin.setVisible(true);
-                    dbload.setVisible(true);
-                    break;
-                case USER:
-                    meter.setVisible(true);
-                    profile.setVisible(true);
-                    admin.setVisible(false);
-                    dbload.setVisible(false);
-                    break;
+            Role role = currentUser.getRoles().contains(ADMIN) ?
+                    ADMIN :
+                    USER;
+            if(role == ADMIN) {
+                meter.setVisible(false);
+                profile.setVisible(true);
+                admin.setVisible(true);
+                dbload.setVisible(true);
+            }
+            if(role == USER){
+                meter.setVisible(true);
+                profile.setVisible(true);
+                admin.setVisible(false);
+                dbload.setVisible(false);
             }
         }
     }

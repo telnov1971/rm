@@ -32,7 +32,6 @@ public class ListUsers  extends Div implements BeforeEnterObserver {
     private final TextField filterText = new TextField();
 
     private final Grid<User> grid = new Grid<>(User.class, false);
-//    private ListDataProvider<User> userDataProvider;
 
     public ListUsers(UserService userService) {
         HorizontalLayout filterLayout = new HorizontalLayout();

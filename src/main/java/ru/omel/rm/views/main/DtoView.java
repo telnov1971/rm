@@ -20,7 +20,6 @@ import ru.omel.rm.data.service.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @PageTitle("Показания счетчиков")
 @Route(value = "meters", layout = MainView.class)
@@ -64,14 +63,10 @@ public class DtoView extends Div implements BeforeEnterObserver {
         filterLayout.setWidthFull();
         superHeader.add(header,filterLayout);
         superHeader.setWidthFull();
-//        filterLayout.getElement().getStyle().set("margin", "5px");
-        addClassNames("master-detail-view", "flex", "flex-col"); //, "h-full");
+        addClassNames("master-detail-view", "flex", "flex-col");
 
         // Configure Grid
         gridSetting();
-
-//        dtoIndMetList = DataHelper.createTableIndMet("1-0073",
-//                contractService,meterDeviceService,indicationService);
 
         VerticalLayout ltz = new VerticalLayout();
         ltz.add(new Label("Тарифная"), new Label("зона"));
@@ -103,7 +98,6 @@ public class DtoView extends Div implements BeforeEnterObserver {
         gridIndMet.addColumn(DtoIndMet::getMeter).setHeader("Показания")
                 .setAutoWidth(true).setTextAlign(ColumnTextAlign.END);
         gridIndSetting();
-//        Collections.sort(dtoIndMetList);
         gridIndMet.setItems(filterList(dtoIndMetList));
         gridIndMet.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
         startDate.addValueChangeListener(e -> {
@@ -133,11 +127,13 @@ public class DtoView extends Div implements BeforeEnterObserver {
                 contractService, meterDeviceService, indicationService);
         if(contractService.findByStrNumber(currentUser.getUsername()).isPresent()){
             Contract currentContract = contractService
-                    .findByStrNumber(currentUser.getUsername()).get();
-            tNumber.setText(currentContract.getNumgp());
-            tNum.setText(currentContract.getStrNumber());
-            tName.setText(currentContract.getStrName());
-            tInn.setText(currentContract.getINN());
+                    .findByStrNumber(currentUser.getUsername()).orElse(null);
+            if(currentContract != null) {
+                tNumber.setText(currentContract.getNumgp());
+                tNum.setText(currentContract.getStrNumber());
+                tName.setText(currentContract.getStrName());
+                tInn.setText(currentContract.getINN());
+            }
         }
 
     }
@@ -178,7 +174,7 @@ public class DtoView extends Div implements BeforeEnterObserver {
                             .after(start))
                     .filter(item -> item.getDate()
                             .before(end))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return list;
     }

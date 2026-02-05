@@ -33,6 +33,7 @@ public class DbLoadService {
     private final IndicationService indicationService;
     private final MeterDeviceService meterDeviceService;
 
+    int count = 0;
     public DbLoadService(DogService dogService
             , PokService pokService
             , PuService puService
@@ -112,7 +113,9 @@ public class DbLoadService {
         Optional<Indication> indication;
         Indication ind;
         MeterDevice mt;
+        count = 0;
         for(Pok p : pokList){
+            count++;
             if((meterDeviceService.findByExtId(
                         Long.valueOf(p.getCeId())))
                     .isPresent()){
@@ -180,8 +183,17 @@ public class DbLoadService {
     private void writeContract() {
         List<Dog> dogList = dogService.findAll();
         Contract newContract;
+        Optional<Long> abid; 
         for(Dog dog : dogList) {
             Optional<Contract> contract = contractService.findByStrNumber(dog.getAbNum());
+            Optional<Contract> contractID = contractService.findByExtId(Long.valueOf(dog.getAbId()));
+            if(contractID.isPresent()){
+                if(contractID.get().getExtId() == Long.valueOf(dog.getAbId())) {
+                    Contract oldContract = contractID.get();
+                    oldContract.setExtId(oldContract.getExtId()*1000000);
+                    contractService.save(oldContract);
+                }
+            }
             if(!contract.isPresent()) {
                 newContract = new Contract();
                 newContract.setStrNumber(dog.getAbNum());
@@ -246,15 +258,25 @@ public class DbLoadService {
     }
     private void writeMeterDevice(){
         List<Pu> puList = puService.findAll();
-        Optional<MeterDevice> meterDevice;
+        Optional<MeterDevice> meterDevice = java.util.Optional.empty();
         MeterDevice mt;
+        count = 0;
         for(Pu pu : puList){
-            meterDevice = meterDeviceService.findByExtId(
+            count++;
+            try {
+             meterDevice = meterDeviceService.findByExtId(
                     Long.valueOf(pu.getCeId()));
-            if(meterDevice.isEmpty()){
+            } catch (Exception e) {
+                System.out.println("ERROR on " + pu.getCeId());
+            }
+            if(!meterDevice.isPresent()){
                 mt = new MeterDevice();
-                mt.setContract(contractService.findByExtId(
-                        Long.valueOf(pu.getAbId())));
+                try {
+                    mt.setContract(contractService.findByExtId(
+                        Long.valueOf(pu.getAbId())).get());                
+                } catch (Exception e) {
+                    System.out.println("ERROR on " + e.getMessage() + " pu: " + pu.getCeId());
+                }
                 mt.setExtId(Long.valueOf(pu.getCeId()));
             } else {
                 mt = meterDevice.get();
